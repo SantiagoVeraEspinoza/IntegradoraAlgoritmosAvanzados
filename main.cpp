@@ -196,13 +196,30 @@ int process()
     // Uso KMP(str, pat); // Ejecuta el método KMP - O(n+m)
 
     // Dávalos:
+    // - Actualiza tu branch dev (git pull) y haz todo esto en "dev-davalos" (copia de "dev"):
     // - Crear función que vuelva un string espejeado - mirrorString(string input)
     // - Función copia KMPP2(string mcode_palindrome) - Regresas pair <bool, string> - Formato string "<pos1> <pos2>", si no encuentras nada regresas ""
+    // - Formateas los resultados obtenidos para mostrar coincidencias del código espejeado en el transmission
 
     // pair <int, int> par_nums;
     // par_nums.first = 2;
     // par_nums.second = 3;
     // cout << par_nums.first << " - " << par_nums.second;
+
+    // Cada que actualices el código: g++ -o main main.cpp
+    // Ejecutar: ./main.exe < test.txt
+    // Actualiza text.txt para un resultado distinto
+
+    // Luis Portilla
+    // - Actualiza tu branch dev (git pull) y haz todo esto en copia de "dev" llamada "dev-portilla"
+    // - Ver videos o recursos sobre longest common substring (vienen varios en https://experiencia21.tec.mx/courses/413786/pages/aprende-sobre-dot-dot-dot-longest-common-substring?module_item_id=24283206)
+    // - Crear función para encontra la subcadena más larga entre dos cadenas de texto - longestCommonSubstring(string s1, string s2) - Regresa string ("<pos1> <pos2>")
+    // - Usa el vector de transmiciones ("transmissions")
+    // - Formateas los resultados obtenidos para mostrar coincidencias den ambos transmission (usa el formato que yo hice)
+
+    // Ambos:
+    // Docuemnten complejidades
+    // Utilicen estándar docificación (cammel case para funciones y guión bajo para separar variables)
 }
 
 #ifdef _WIN32
