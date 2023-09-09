@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <dirent.h>
 #include <sys/stat.h>
@@ -9,6 +10,7 @@ using namespace std;
 Datos:
 - Nombres:
     + Santiago Vera Espinoza - A01641585
+    + Carlos Isaac Dávalos Lomelí - A01706041
 - Fecha: 27/08/2023
 - Clase: Análisis y diseño de algoritmos avanzados - TC2038
 - Grupo: 570
@@ -22,7 +24,8 @@ Variables de complejidad:
 */
 
 // Imprime un vector - O(v)
-void printVector(vector<int> input)
+template <typename T>
+void printVector(vector<T> input)
 {
     cout << "Vector = [";
     for (int i=0; i<input.size(); i++) // Itera por el vector - O(v)
@@ -109,9 +112,10 @@ string KMP(string str, string pat)
     return "false";
 }
 
+// Proceso principal - O()
 int process()
 {
-    string root_dir;
+    string root_dir; // String con el root dir
 
     cout << "Inserta el directorio a analizar: "; // Directorio a analizar
     cin >> root_dir;
@@ -124,23 +128,98 @@ int process()
         return 1;
     }
 
-    cout << root_dir;
+    cout << endl << "Parte 1:" << endl; // Comienza la parte 1
+
+    vector <string> patterns; // Vector para los patrones y las transmisiones
+    vector <string> transmissions;
 
     struct dirent* entry; // Itera por el directorio
-    while ((entry = readdir(dir)) != nullptr) {
-        string file_path = root_dir + entry->d_name;
+    while ((entry = readdir(dir)) != nullptr) { // Itera por los archivos maliciosos (m) y por los códigos (n) - O(2n + 3m) = O(n + m)
+        string file_path = root_dir + entry->d_name; // General el path relativo
 
-        struct stat file_info;
-        cout << endl << entry->d_name << " - " << file_path << " - " << DT_REG;
-        if (entry->d_type == DT_REG) {
-            // Process regular files (not directories)
-            cout << "File: " << entry->d_name << std::endl;
+        if ((KMP(file_path, "/.") != "false") || (KMP(entry->d_name, "..") != "false")) // Evita los directorios referencia
+        {
+            continue;
+        }
+
+        if ((KMP(file_path, "mcode") != "false")) // Lee el Mcode
+        {
+            fstream input_file(file_path);
+
+            if (!input_file.is_open()) { // Checa si el archivo existe
+                std::cerr << "Error opening file: " << file_path << std::endl;
+                return 1;
+            }
+
+            string line;
+            while (std::getline(input_file, line)) { // Obtiene la linea - O(m)
+                patterns.push_back(line); // Pushea al vector - O(1)
+            }
+
+            input_file.close();
+            continue;
+        }
+
+        if (KMP(file_path, "transmission") != "false") // Lee la transmición
+        {
+            fstream input_file(file_path);
+
+            if (!input_file.is_open()) { // Checa si el archivo existe
+                std::cerr << "Error opening file: " << file_path << std::endl;
+                return 1;
+            }
+
+            string line;
+            while (std::getline(input_file, line)) { // Obtiene la linea - O(n)
+                transmissions.push_back(line); // Pushea al vector - O(1)
+            }
+
+            input_file.close();
+            continue;
         }
     }
 
-    //string res = KMP(str, pat); // Ejecuta el método KMP - O(n+m)
+    int cont = 1;
+    for (auto e:transmissions) // Proceso para imprimir los resultados, itera por las transmiciones (2) - O(2) = O(1)
+    {
+        cout << endl << "Para transmission" << cont << ".txt:" << endl;
 
-    //cout << endl << res << endl;
+        int cont2 = 1;
+        for (auto p:patterns) // Itera por cada patrón (3) - O(3) = O(1)
+        {
+            cout << "Código " << cont2 << ": " << KMP(e, p) << endl; // Busca el patrón - O(n + m)
+            cont2++;
+        }
+        cont++;
+    }
+
+    // Uso KMP(str, pat); // Ejecuta el método KMP - O(n+m)
+
+    // Dávalos:
+    // - Actualiza tu branch dev (git pull) y haz todo esto en "dev-davalos" (copia de "dev"):
+    // - Crear función que vuelva un string espejeado - mirrorString(string input)
+    // - Función copia KMPP2(string mcode_palindrome) - Regresas pair <bool, string> - Formato string "<pos1> <pos2>", si no encuentras nada regresas ""
+    // - Formateas los resultados obtenidos para mostrar coincidencias del código espejeado en el transmission
+
+    // pair <int, int> par_nums;
+    // par_nums.first = 2;
+    // par_nums.second = 3;
+    // cout << par_nums.first << " - " << par_nums.second;
+
+    // Cada que actualices el código: g++ -o main main.cpp
+    // Ejecutar: ./main.exe < test.txt
+    // Actualiza text.txt para un resultado distinto
+
+    // Luis Portilla
+    // - Actualiza tu branch dev (git pull) y haz todo esto en copia de "dev" llamada "dev-portilla"
+    // - Ver videos o recursos sobre longest common substring (vienen varios en https://experiencia21.tec.mx/courses/413786/pages/aprende-sobre-dot-dot-dot-longest-common-substring?module_item_id=24283206)
+    // - Crear función para encontra la subcadena más larga entre dos cadenas de texto - longestCommonSubstring(string s1, string s2) - Regresa string ("<pos1> <pos2>")
+    // - Usa el vector de transmiciones ("transmissions")
+    // - Formateas los resultados obtenidos para mostrar coincidencias den ambos transmission (usa el formato que yo hice)
+
+    // Ambos:
+    // Docuemnten complejidades
+    // Utilicen estándar docificación (cammel case para funciones y guión bajo para separar variables)
 }
 
 #ifdef _WIN32
