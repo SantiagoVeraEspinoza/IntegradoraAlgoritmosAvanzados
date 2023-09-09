@@ -195,7 +195,7 @@ int process()
 
     // Uso KMP(str, pat); // Ejecuta el método KMP - O(n+m)
 
-    // Dávalos:
+    // Dávalos:hi 
     // - Actualiza tu branch dev (git pull) y haz todo esto en "dev-davalos" (copia de "dev"):
     // - Crear función que vuelva un string espejeado - mirrorString(string input)
     // - Función copia KMPP2(string mcode_palindrome) - Regresas pair <bool, string> - Formato string "<pos1> <pos2>", si no encuentras nada regresas ""
