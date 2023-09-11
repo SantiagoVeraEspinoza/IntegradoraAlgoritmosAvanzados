@@ -10,8 +10,9 @@ using namespace std;
 /*
 Datos:
 - Nombres:
-    + Santiago Vera Espinoza - A01641585
-    + Carlos Isaac Dávalos Lomelí - A01706041
+    + Santiago Vera Espinoza - A01641585 - Parte 1, Parte 2, Parte 3
+    + Carlos Isaac Dávalos Lomelí - A01706041 - Parte 2, Parte 3
+    + Luis Portillo López - A00829935 - Parte 2, Parte 3
 - Fecha: 27/08/2023
 - Clase: Análisis y diseño de algoritmos avanzados - TC2038
 - Grupo: 570
@@ -20,6 +21,7 @@ Datos:
 Variables de complejidad:
 
 - n: Cantidad de letras en palabra
+- n2: Cantidad de letras en palabra auxiliar
 - m: Cantidad de letras en patrón
 - v: Cantidad de elmentos en vector
 */
@@ -138,7 +140,41 @@ vector <string> split(const string& input, char delimiter) {
     return tokens;
 }
 
-// Proceso principal - O()
+// Encuentra el substring común más largo - O(nn2)
+string longestCommonSubstring(const string &s1, const string &s2) {
+    int n = s1.length();
+    int m = s2.length();
+
+    // Usar dos filas para el dp - O(n)
+    vector<vector<int>> dp(2, vector<int>(m + 1, 0));
+
+    int maxLength = 0; // Almacena la longitud de la subcadena más larga
+    int endPosS1 = 0;  // Para almacenar el índice del carácter final en s1 de LCS
+
+    // Llena la tabla
+    for (int i = 1; i <= n; i++) { // Itera por ambas strings - O(nn2)
+        for (int j = 1; j <= m; j++) {
+            if (s1[i - 1] == s2[j - 1]) { // Si encuentra una string igual actualiza el dp
+                dp[i % 2][j] = dp[(i - 1) % 2][j - 1] + 1; // Usa la fila par o impar para escribir en el espacio j la repsuesta de los dos caracteres anteriores anterior más 1
+                if (dp[i % 2][j] > maxLength) { // Si la respuesta es mayor al máximo valor actualiza los máximos valores
+                    maxLength = dp[i % 2][j];
+                    endPosS1 = i;
+                }
+            } else { // Sino, deja el valor como 0
+                dp[i % 2][j] = 0;
+            }
+        }
+    }
+
+    // Si no hay subcadena común
+    if (maxLength == 0)
+        return "";
+
+    // Devuelve la subcadena común más larga - O(1)
+    return to_string(endPosS1 - maxLength + 1) + " " + to_string(endPosS1 - maxLength + maxLength);
+}
+
+// Proceso principal - O(n+m+nn2)
 int process()
 {
     string root_dir; // String con el root dir
@@ -255,33 +291,10 @@ int process()
         cont++;
     }
 
-    // Uso KMP(str, pat); // Ejecuta el método KMP - O(n+m)
+    cout << endl << "Parte 3:" << endl; // Comienza la parte 3
 
-    // Dávalos: 
-    // - Actualiza tu branch dev (git pull) y haz todo esto en "dev-davalos" (copia de "dev"):
-    // - Crear función que vuelva un string espejeado - mirrorString(string input)
-    // - Función copia KMPP2(string mcode_palindrome) - Regresas pair <bool, string> - Formato string "<pos1> <pos2>", si no encuentras nada regresas ""
-    // - Formateas los resultados obtenidos para mostrar coincidencias del código espejeado en el transmission
-
-    // pair <int, int> par_nums;
-    // par_nums.first = 2;
-    // par_nums.second = 3;
-    // cout << par_nums.first << " - " << par_nums.second;
-
-    // Cada que actualices el código: g++ -o main main.cpp
-    // Ejecutar: ./main.exe < test.txt
-    // Actualiza text.txt para un resultado distinto
-
-    // Luis Portilla
-    // - Actualiza tu branch dev (git pull) y haz todo esto en copia de "dev" llamada "dev-portilla"
-    // - Ver videos o recursos sobre longest common substring (vienen varios en https://experiencia21.tec.mx/courses/413786/pages/aprende-sobre-dot-dot-dot-longest-common-substring?module_item_id=24283206)
-    // - Crear función para encontra la subcadena más larga entre dos cadenas de texto - longestCommonSubstring(string s1, string s2) - Regresa string ("<pos1> <pos2>")
-    // - Usa el vector de transmiciones ("transmissions")
-    // - Formateas los resultados obtenidos para mostrar coincidencias den ambos transmission (usa el formato que yo hice)
-
-    // Ambos:
-    // Docuemnten complejidades
-    // Utilicen estándar docificación (cammel case para funciones y guión bajo para separar variables)
+    cout << "Substring más largo entre los archivos de transmisión:" << endl;
+    cout << longestCommonSubstring(transmissions[0], transmissions[1]); // Regresa el LCS entre ambas transmiciones - O(nn2)
 }
 
 #ifdef _WIN32
