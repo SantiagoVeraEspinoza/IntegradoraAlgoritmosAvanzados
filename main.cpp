@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include <fstream>
 #include <vector>
 #include <dirent.h>
@@ -112,26 +113,34 @@ string KMP(string str, string pat)
     return "false";
 }
 
+// Espejear string - O(n)
 string mirrorString(string input) {
     int length = input.length();
     string mirrored = input;
 
-    for (int i = 0; i < length / 2; i++) {
+    for (int i = 0; i < length / 2; i++) { // Itera por el string - O(n/2) = O(n)
         swap(mirrored[i], mirrored[length - i - 1]);
     }
 
-    return mirrored;
+    return input + mirrored;
+}
+
+// Separa con un delimitador - O(n)
+vector <string> split(const string& input, char delimiter) {
+    vector<string> tokens;
+    istringstream tokenStream(input);
+    string token;
+
+    while (getline(tokenStream, token, delimiter)) { // Itera por el string y evita los delimitadores - O(n)
+        tokens.push_back(token);
+    }
+
+    return tokens;
 }
 
 // Proceso principal - O()
 int process()
 {
-    string input = "hello";
-    string mirrored = mirrorString(input);
-
-    cout << "Input: " << input << endl;
-    cout << "Mirrored: " << mirrored << endl;
-    
     string root_dir; // String con el root dir
 
     cout << "Inserta el directorio a analizar: "; // Directorio a analizar
@@ -145,7 +154,7 @@ int process()
         return 1;
     }
 
-    cout << endl << "Parte 1 y 2:" << endl; // Comienza la parte 1
+    cout << endl << "Parte 1:" << endl; // Comienza la parte 1
 
     vector <string> patterns; // Vector para los patrones y las transmisiones
     vector <string> transmissions;
@@ -197,29 +206,54 @@ int process()
     }
 
     int cont = 1;
-    // Itera por cada transmisión
+    // Itera por cada transmisión - O(2) = O(n+m)
     for (auto e : transmissions) {
-    cout << endl << "Para transmission" << cont << ".txt:" << endl;
+        cout << endl << "Para transmission" << cont << ".txt:" << endl;
 
-    int cont2 = 1;
-    for (auto p : patterns) // Itera por cada patrón
-    {
-        string originalResult = KMP(e, p); // Busca el patrón original
-        string mirroredResult = KMP(e, mirrorString(p)); // Busca el patrón espejeado
+        int cont2 = 1;
+        for (auto p : patterns) // Itera por cada patrón - O(3)
+        {
+            string originalResult = KMP(e, p); // Busca el patrón original - O(n+m)
 
-        if (originalResult != "false") {
             cout << "Código " << cont2 << ": " << originalResult << endl;
-        }
 
-        if (mirroredResult != "false") {
-            cout << "Código Espejeado " << cont2 << ": " << mirroredResult << endl;
+            cont2++;
         }
+        cont++;
 
-        cont2++;
     }
-    cont++;
-}
 
+    cout << endl << "Parte 2:" << endl; // Comienza la parte 2
+
+    cont = 1;
+    // Itera por cada transmisión - O(2) = O(n+m)
+    for (auto e : transmissions) {
+        cout << endl << "Para transmission" << cont << ".txt:" << endl;
+
+        int cont2 = 1;
+        pair <int, string> max = {-1, "-1"};
+        for (auto p : patterns) // Itera por cada patrón - O(3)
+        {
+            string mirroredString = mirrorString(p); // Espejea (obtiene el palíndromo) de el código malicioso - O(n)
+            string mirroredResult = KMP(e, mirroredString); // Busca el patrón espejeado - O(n+m)
+
+            if (mirroredResult != "false") {
+                vector <string> result = split(mirroredResult, ' '); // Divide el string - O(n)
+
+                mirroredResult = "Coincidencia máxima en rango: " + to_string(stoi(result[1]) + 1) + " " + to_string(stoi(result[1]) + mirroredString.size() + 1);
+
+                if (max.first = -1) max = {mirroredString.size(), mirroredResult};
+
+                if (mirroredString.size() > max.first) max = {mirroredString.size(), mirroredResult};
+            }
+
+            cont2++;
+        }
+
+        cout << max.second << endl;
+
+        cont++;
+    }
 
     // Uso KMP(str, pat); // Ejecuta el método KMP - O(n+m)
 
