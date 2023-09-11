@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include <fstream>
 #include <vector>
 #include <dirent.h>
@@ -9,8 +10,9 @@ using namespace std;
 /*
 Datos:
 - Nombres:
-    + Santiago Vera Espinoza - A01641585
-    + Carlos Isaac Dávalos Lomelí - A01706041
+    + Santiago Vera Espinoza - A01641585 - Parte 1, Parte 2, Parte 3
+    + Carlos Isaac Dávalos Lomelí - A01706041 - Parte 2, Parte 3
+    + Luis Portillo López - A00829935 - Parte 2, Parte 3
 - Fecha: 27/08/2023
 - Clase: Análisis y diseño de algoritmos avanzados - TC2038
 - Grupo: 570
@@ -19,6 +21,7 @@ Datos:
 Variables de complejidad:
 
 - n: Cantidad de letras en palabra
+- n2: Cantidad de letras en palabra auxiliar
 - m: Cantidad de letras en patrón
 - v: Cantidad de elmentos en vector
 */
@@ -112,7 +115,66 @@ string KMP(string str, string pat)
     return "false";
 }
 
-// Proceso principal - O()
+// Espejear string - O(n)
+string mirrorString(string input) {
+    int length = input.length();
+    string mirrored = input;
+
+    for (int i = 0; i < length / 2; i++) { // Itera por el string - O(n/2) = O(n)
+        swap(mirrored[i], mirrored[length - i - 1]);
+    }
+
+    return input + mirrored;
+}
+
+// Separa con un delimitador - O(n)
+vector <string> split(const string& input, char delimiter) {
+    vector<string> tokens;
+    istringstream tokenStream(input);
+    string token;
+
+    while (getline(tokenStream, token, delimiter)) { // Itera por el string y evita los delimitadores - O(n)
+        tokens.push_back(token);
+    }
+
+    return tokens;
+}
+
+// Encuentra el substring común más largo - O(nn2)
+string longestCommonSubstring(const string &s1, const string &s2) {
+    int n = s1.length();
+    int m = s2.length();
+
+    // Usar dos filas para el dp - O(n)
+    vector<vector<int>> dp(2, vector<int>(m + 1, 0));
+
+    int maxLength = 0; // Almacena la longitud de la subcadena más larga
+    int endPosS1 = 0;  // Para almacenar el índice del carácter final en s1 de LCS
+
+    // Llena la tabla
+    for (int i = 1; i <= n; i++) { // Itera por ambas strings - O(nn2)
+        for (int j = 1; j <= m; j++) {
+            if (s1[i - 1] == s2[j - 1]) { // Si encuentra una string igual actualiza el dp
+                dp[i % 2][j] = dp[(i - 1) % 2][j - 1] + 1; // Usa la fila par o impar para escribir en el espacio j la repsuesta de los dos caracteres anteriores anterior más 1
+                if (dp[i % 2][j] > maxLength) { // Si la respuesta es mayor al máximo valor actualiza los máximos valores
+                    maxLength = dp[i % 2][j];
+                    endPosS1 = i;
+                }
+            } else { // Sino, deja el valor como 0
+                dp[i % 2][j] = 0;
+            }
+        }
+    }
+
+    // Si no hay subcadena común
+    if (maxLength == 0)
+        return "";
+
+    // Devuelve la subcadena común más larga - O(1)
+    return to_string(endPosS1 - maxLength + 1) + " " + to_string(endPosS1 - maxLength + maxLength);
+}
+
+// Proceso principal - O(n+m+nn2)
 int process()
 {
     string root_dir; // String con el root dir
@@ -180,46 +242,59 @@ int process()
     }
 
     int cont = 1;
-    for (auto e:transmissions) // Proceso para imprimir los resultados, itera por las transmiciones (2) - O(2) = O(1)
-    {
+    // Itera por cada transmisión - O(2) = O(n+m)
+    for (auto e : transmissions) {
         cout << endl << "Para transmission" << cont << ".txt:" << endl;
 
         int cont2 = 1;
-        for (auto p:patterns) // Itera por cada patrón (3) - O(3) = O(1)
+        for (auto p : patterns) // Itera por cada patrón - O(3)
         {
-            cout << "Código " << cont2 << ": " << KMP(e, p) << endl; // Busca el patrón - O(n + m)
+            string originalResult = KMP(e, p); // Busca el patrón original - O(n+m)
+
+            cout << "Código " << cont2 << ": " << originalResult << endl;
+
             cont2++;
         }
         cont++;
+
     }
 
-    // Uso KMP(str, pat); // Ejecuta el método KMP - O(n+m)
+    cout << endl << "Parte 2:" << endl; // Comienza la parte 2
 
-    // Dávalos:
-    // - Actualiza tu branch dev (git pull) y haz todo esto en "dev-davalos" (copia de "dev"):
-    // - Crear función que vuelva un string espejeado - mirrorString(string input)
-    // - Función copia KMPP2(string mcode_palindrome) - Regresas pair <bool, string> - Formato string "<pos1> <pos2>", si no encuentras nada regresas ""
-    // - Formateas los resultados obtenidos para mostrar coincidencias del código espejeado en el transmission
+    cont = 1;
+    // Itera por cada transmisión - O(2) = O(n+m)
+    for (auto e : transmissions) {
+        cout << endl << "Para transmission" << cont << ".txt:" << endl;
 
-    // pair <int, int> par_nums;
-    // par_nums.first = 2;
-    // par_nums.second = 3;
-    // cout << par_nums.first << " - " << par_nums.second;
+        int cont2 = 1;
+        pair <int, string> max = {-1, "-1"};
+        for (auto p : patterns) // Itera por cada patrón - O(3)
+        {
+            string mirroredString = mirrorString(p); // Espejea (obtiene el palíndromo) de el código malicioso - O(n)
+            string mirroredResult = KMP(e, mirroredString); // Busca el patrón espejeado - O(n+m)
 
-    // Cada que actualices el código: g++ -o main main.cpp
-    // Ejecutar: ./main.exe < test.txt
-    // Actualiza text.txt para un resultado distinto
+            if (mirroredResult != "false") {
+                vector <string> result = split(mirroredResult, ' '); // Divide el string - O(n)
 
-    // Luis Portilla
-    // - Actualiza tu branch dev (git pull) y haz todo esto en copia de "dev" llamada "dev-portilla"
-    // - Ver videos o recursos sobre longest common substring (vienen varios en https://experiencia21.tec.mx/courses/413786/pages/aprende-sobre-dot-dot-dot-longest-common-substring?module_item_id=24283206)
-    // - Crear función para encontra la subcadena más larga entre dos cadenas de texto - longestCommonSubstring(string s1, string s2) - Regresa string ("<pos1> <pos2>")
-    // - Usa el vector de transmiciones ("transmissions")
-    // - Formateas los resultados obtenidos para mostrar coincidencias den ambos transmission (usa el formato que yo hice)
+                mirroredResult = "Coincidencia máxima en rango: " + to_string(stoi(result[1]) + 1) + " " + to_string(stoi(result[1]) + mirroredString.size() + 1);
 
-    // Ambos:
-    // Docuemnten complejidades
-    // Utilicen estándar docificación (cammel case para funciones y guión bajo para separar variables)
+                if (max.first = -1) max = {mirroredString.size(), mirroredResult};
+
+                if (mirroredString.size() > max.first) max = {mirroredString.size(), mirroredResult};
+            }
+
+            cont2++;
+        }
+
+        cout << max.second << endl;
+
+        cont++;
+    }
+
+    cout << endl << "Parte 3:" << endl; // Comienza la parte 3
+
+    cout << "Substring más largo entre los archivos de transmisión:" << endl;
+    cout << longestCommonSubstring(transmissions[0], transmissions[1]); // Regresa el LCS entre ambas transmiciones - O(nn2)
 }
 
 #ifdef _WIN32
