@@ -10,9 +10,9 @@ using namespace std;
 /*
 Datos:
 - Nombres:
-    + Santiago Vera Espinoza - A01641585
-    + Carlos Isaac Dávalos Lomelí - A01706041
-    + Luis Portillo López - A00829935
+    + Santiago Vera Espinoza - A01641585 - Parte 1, Parte 2, Parte 3
+    + Carlos Isaac Dávalos Lomelí - A01706041 - Parte 2, Parte 3
+    + Luis Portillo López - A00829935 - Parte 2, Parte 3
 - Fecha: 27/08/2023
 - Clase: Análisis y diseño de algoritmos avanzados - TC2038
 - Grupo: 570

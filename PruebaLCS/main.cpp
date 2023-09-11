@@ -19,51 +19,38 @@ void printMatrix(vector <vector <int>> input)
     }
 }
 
-int LCSubStr(string s, string t, int n, int m)
-{
-   
-    // Create DP table
-    int dp[2][m + 1];
-    int res = 0;
-       
-      dp[0][0] = 0;
-      dp[1][0] = 0;
- 
-    for (int i = 1; i <= n; i++) {
+// Encuentra el substring común más largo - O(nn2)
+string longestCommonSubstring(const string &s1, const string &s2) {
+    int n = s1.length();
+    int m = s2.length();
+
+    // Usar dos filas para el dp - O(n)
+    vector<vector<int>> dp(2, vector<int>(m + 1, 0));
+
+    int maxLength = 0; // Almacena la longitud de la subcadena más larga
+    int endPosS1 = 0;  // Para almacenar el índice del carácter final en s1 de LCS
+
+    // Llena la tabla
+    for (int i = 1; i <= n; i++) { // Itera por ambas strings - O(nn2)
         for (int j = 1; j <= m; j++) {
-            if (s[i - 1] == t[j - 1]) {
-                dp[i % 2][j] = dp[(i - 1) % 2][j - 1] + 1;
-                if (dp[i % 2][j] > res)
-                    res = dp[i % 2][j];
-            }
-            else
+            if (s1[i - 1] == s2[j - 1]) { // Si encuentra una string igual actualiza el dp
+                dp[i % 2][j] = dp[(i - 1) % 2][j - 1] + 1; // Usa la fila par o impar para escribir en el espacio j la repsuesta de los dos caracteres anteriores anterior más 1
+                if (dp[i % 2][j] > maxLength) { // Si la respuesta es mayor al máximo valor actualiza los máximos valores
+                    maxLength = dp[i % 2][j];
+                    endPosS1 = i;
+                }
+            } else { // Sino, deja el valor como 0
                 dp[i % 2][j] = 0;
-        }
-    }
-    return res;
-}
-
-
-// Obtiene el substring común más largo - O(nm)
-string llongestCommonSubstring(string s1, string s2)
-{
-    vector <vector <int>> dp(s1.size() + 1, vector<int>(s2.size() + 1, 0)); // Crea una matriz de ceros para el dp - O(nm)
-
-    printMatrix(dp);
-
-    pair <int, int> max = {-1, -1}; // Longitud y posición por defecto para obttener la máxima substring
-    for (int i=0; i<s2.size(); i++) // Itera por la segunda string - O(m)
-    {
-        for (int j=0; j<s1.size(); j++) // Itera por la primer string - O(n)
-        {
-            if (s1[i] == s2[j]) { // Si encouentra coincidencias asigna al dp de las coincidencias el valor de los dos chars anteriores - O(1)
-                dp[i+1][j+1] = dp[i][j] + 1;
-                if (dp[i+1][j+1] > max.first) max = {dp[i+1][j+1], i};
             }
         }
     }
 
-    return to_string(max.second - max.first + 2) + " " + to_string(max.second + 1); // Regresa el resultado con formato - O(1)
+    // Si no hay subcadena común
+    if (maxLength == 0)
+        return "";
+
+    // Devuelve la subcadena común más larga - O(1)
+    return to_string(endPosS1 - maxLength + 1) + " " + to_string(endPosS1 - maxLength + maxLength);
 }
 
 void process()
@@ -71,7 +58,7 @@ void process()
     string s1 = "daxdnynytdnaxdnytnr";
     string s2 = "axdnytvab";
 
-    cout << LCSubStr(s1, s2, s1.size(), );
+    cout << longestCommonSubstring(s1, s2);
 }
 
 #ifdef _WIN32
