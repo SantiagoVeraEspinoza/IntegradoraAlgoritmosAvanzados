@@ -21,6 +21,7 @@ Datos:
 Variables de complejidad:
 
 - n: Cantidad de letras en palabra
+- n2: Cantidad de letras en palabra auxiliar
 - m: Cantidad de letras en patrón
 - v: Cantidad de elmentos en vector
 */
@@ -139,27 +140,27 @@ vector <string> split(const string& input, char delimiter) {
     return tokens;
 }
 
-// Encuentra el substring común más largo - O(nm)
+// Encuentra el substring común más largo - O(nn2)
 string longestCommonSubstring(const string &s1, const string &s2) {
     int n = s1.length();
     int m = s2.length();
 
-    // Usar dos filas en lugar de la matriz completa para dp
+    // Usar dos filas para el dp - O(n)
     vector<vector<int>> dp(2, vector<int>(m + 1, 0));
 
     int maxLength = 0; // Almacena la longitud de la subcadena más larga
     int endPosS1 = 0;  // Para almacenar el índice del carácter final en s1 de LCS
 
     // Llena la tabla
-    for (int i = 1; i <= n; i++) { // Itera por ambas strings - O(nm)
+    for (int i = 1; i <= n; i++) { // Itera por ambas strings - O(nn2)
         for (int j = 1; j <= m; j++) {
             if (s1[i - 1] == s2[j - 1]) { // Si encuentra una string igual actualiza el dp
-                dp[i % 2][j] = dp[(i - 1) % 2][j - 1] + 1;
-                if (dp[i % 2][j] > maxLength) {
+                dp[i % 2][j] = dp[(i - 1) % 2][j - 1] + 1; // Usa la fila par o impar para escribir en el espacio j la repsuesta de los dos caracteres anteriores anterior más 1
+                if (dp[i % 2][j] > maxLength) { // Si la respuesta es mayor al máximo valor actualiza los máximos valores
                     maxLength = dp[i % 2][j];
                     endPosS1 = i;
                 }
-            } else {
+            } else { // Sino, deja el valor como 0
                 dp[i % 2][j] = 0;
             }
         }
@@ -173,7 +174,7 @@ string longestCommonSubstring(const string &s1, const string &s2) {
     return to_string(endPosS1 - maxLength + 1) + " " + to_string(endPosS1 - maxLength + maxLength);
 }
 
-// Proceso principal - O()
+// Proceso principal - O(n+m+nn2)
 int process()
 {
     string root_dir; // String con el root dir
@@ -293,8 +294,7 @@ int process()
     cout << endl << "Parte 3:" << endl; // Comienza la parte 3
 
     cout << "Substring más largo entre los archivos de transmisión:" << endl;
-    // cout << transmissions[0] << endl << "------------------" << endl << transmissions[1] << endl;
-    cout << longestCommonSubstring(transmissions[0], transmissions[1]);
+    cout << longestCommonSubstring(transmissions[0], transmissions[1]); // Regresa el LCS entre ambas transmiciones - O(nn2)
 }
 
 #ifdef _WIN32
