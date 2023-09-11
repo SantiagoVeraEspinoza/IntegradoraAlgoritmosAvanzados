@@ -112,9 +112,26 @@ string KMP(string str, string pat)
     return "false";
 }
 
+string mirrorString(string input) {
+    int length = input.length();
+    string mirrored = input;
+
+    for (int i = 0; i < length / 2; i++) {
+        swap(mirrored[i], mirrored[length - i - 1]);
+    }
+
+    return mirrored;
+}
+
 // Proceso principal - O()
 int process()
 {
+    string input = "hello";
+    string mirrored = mirrorString(input);
+
+    cout << "Input: " << input << endl;
+    cout << "Mirrored: " << mirrored << endl;
+    
     string root_dir; // String con el root dir
 
     cout << "Inserta el directorio a analizar: "; // Directorio a analizar
@@ -128,7 +145,7 @@ int process()
         return 1;
     }
 
-    cout << endl << "Parte 1:" << endl; // Comienza la parte 1
+    cout << endl << "Parte 1 y 2:" << endl; // Comienza la parte 1
 
     vector <string> patterns; // Vector para los patrones y las transmisiones
     vector <string> transmissions;
@@ -180,22 +197,33 @@ int process()
     }
 
     int cont = 1;
-    for (auto e:transmissions) // Proceso para imprimir los resultados, itera por las transmiciones (2) - O(2) = O(1)
-    {
-        cout << endl << "Para transmission" << cont << ".txt:" << endl;
+    // Itera por cada transmisión
+    for (auto e : transmissions) {
+    cout << endl << "Para transmission" << cont << ".txt:" << endl;
 
-        int cont2 = 1;
-        for (auto p:patterns) // Itera por cada patrón (3) - O(3) = O(1)
-        {
-            cout << "Código " << cont2 << ": " << KMP(e, p) << endl; // Busca el patrón - O(n + m)
-            cont2++;
+    int cont2 = 1;
+    for (auto p : patterns) // Itera por cada patrón
+    {
+        string originalResult = KMP(e, p); // Busca el patrón original
+        string mirroredResult = KMP(e, mirrorString(p)); // Busca el patrón espejeado
+
+        if (originalResult != "false") {
+            cout << "Código " << cont2 << ": " << originalResult << endl;
         }
-        cont++;
+
+        if (mirroredResult != "false") {
+            cout << "Código Espejeado " << cont2 << ": " << mirroredResult << endl;
+        }
+
+        cont2++;
     }
+    cont++;
+}
+
 
     // Uso KMP(str, pat); // Ejecuta el método KMP - O(n+m)
 
-    // Dávalos:hi 
+    // Dávalos: 
     // - Actualiza tu branch dev (git pull) y haz todo esto en "dev-davalos" (copia de "dev"):
     // - Crear función que vuelva un string espejeado - mirrorString(string input)
     // - Función copia KMPP2(string mcode_palindrome) - Regresas pair <bool, string> - Formato string "<pos1> <pos2>", si no encuentras nada regresas ""
